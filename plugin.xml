@@ -1,0 +1,48 @@
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-screenprivacy-cxm"
+        version="1.0.5">
+
+    <name>cordova-plugin-screenprivacy-cxm</name>
+    <description>Cordova plugin to handle screenshot</description>
+    <license>MIT</license>
+    <keywords>cordova</keywords>
+    <repo>https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm</repo>
+    <issue>https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm/issues</issue>
+
+    <js-module src="www/plugin.js" name="plugin">
+        <clobbers target="window.plugins.screenprivacy"/>
+    </js-module>
+
+    <engines>
+        <engine name="cordova" version=">=7.1.0"/>
+        <engine name="cordova-android" version=">=7.0.0"/>
+        <engine name="cordova-ios" version=">=4.3.0"/>
+    </engines>
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="screenprivacy">
+                <param name="android-package" value="com.screenprivacy.ScreenPrivacy"/>
+                <param name="onload" value="true"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/com/screenprivacy/ScreenPrivacy.java" target-dir="src/com/screenprivacy"/>
+    </platform>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="screenprivacy">
+                <param name="ios-package" value="ScreenPrivacy"/>
+                <param name="onload" value="true"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/ScreenPrivacy.h"/>
+        <source-file src="src/ios/ScreenPrivacy.m"/>
+        <header-file src="src/ios/ScreenRecordingDetector.h"/>
+        <source-file src="src/ios/ScreenRecordingDetector.m"/>
+    </platform>
+
+</plugin>
