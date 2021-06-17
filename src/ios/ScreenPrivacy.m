@@ -17,7 +17,7 @@ UIImageView* cover;
                                                 name:UIApplicationWillResignActiveNotification
                                               object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(tookScreeshot)
+                                             selector:@selector(tookScreenshot)
                                                  name:UIApplicationUserDidTakeScreenshotNotification
                                                object:nil];
 
@@ -50,7 +50,7 @@ UIImageView* cover;
     }
 }
 
-- (void)tookScreeshot {
+- (void)tookScreenshot {
     if(_eventCommand!=nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"tookScreenshot"];
         [pluginResult setKeepCallbackAsBool:YES];

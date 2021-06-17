@@ -1,7 +1,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-screenprivacy-cxm"
-        version="1.0.5">
+        version="1.0.7">
 
     <name>cordova-plugin-screenprivacy-cxm</name>
     <description>Cordova plugin to handle screenshot</description>
@@ -35,7 +35,7 @@
         <config-file target="config.xml" parent="/*">
             <feature name="screenprivacy">
                 <param name="ios-package" value="ScreenPrivacy"/>
-                <param name="onload" value="true"/>
+                <param name="onload" value="false"/>
             </feature>
         </config-file>
 

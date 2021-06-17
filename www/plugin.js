@@ -6,7 +6,7 @@ var plugin = {
     cordova.exec(successCallback, errorCallback, 'screenprivacy', 'block', []);
   },
   registerListener : function(callback) {
-    // For iOS to detect system events from webview
+    // For webview to detect system events from plugin
     cordova.exec(callback, callback, 'screenprivacy', 'listen', []);
   }
 }
@@ -26,5 +26,5 @@ cordova.addConstructor(function () {
       return;
     }
   });
-  return window.plugins.preventscreenshot;
+  return window.plugins.screenprivacy;
 });
