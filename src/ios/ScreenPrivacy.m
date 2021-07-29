@@ -5,7 +5,7 @@
 @end
 
 @implementation ScreenPrivacy
-UIImageView* cover;
+
 - (void)pluginInitialize {
 
     [[NSNotificationCenter defaultCenter]addObserver:self
@@ -41,7 +41,6 @@ UIImageView* cover;
     _eventCommand = command;
 }
 
-
 -(void) goingBackground {
     if(_eventCommand!=nil) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"background"];
@@ -70,19 +69,10 @@ UIImageView* cover;
 
 - (void)appDidBecomeActive {
     [ScreenRecordingDetector triggerDetectorTimer];
-    if(cover!=nil) {
-        [cover removeFromSuperview];
-        cover = nil;
-    }
 }
 
 - (void)applicationWillResignActive {
     [ScreenRecordingDetector stopDetectorTimer];
-    if(cover == nil) {
-        cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
-        cover.backgroundColor = [UIColor blackColor];
-        [self.webView addSubview:cover];
-    }
 }
 
 - (void)screenCaptureStatusChanged {
