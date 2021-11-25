@@ -5,7 +5,7 @@
 @end
 
 @implementation ScreenPrivacy
-
+UIImageView* cover;
 - (void)pluginInitialize {
 
     [[NSNotificationCenter defaultCenter]addObserver:self
@@ -69,10 +69,19 @@
 
 - (void)appDidBecomeActive {
     [ScreenRecordingDetector triggerDetectorTimer];
+    if(cover!=nil) {
+        [cover removeFromSuperview];
+        cover = nil;
+    }
 }
 
 - (void)applicationWillResignActive {
     [ScreenRecordingDetector stopDetectorTimer];
+    if(cover == nil) {
+        cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
+        cover.backgroundColor = [UIColor blackColor];
+        [self.webView addSubview:cover];
+    }
 }
 
 - (void)screenCaptureStatusChanged {
