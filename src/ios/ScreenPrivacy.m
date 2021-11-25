@@ -6,8 +6,11 @@
 
 @implementation ScreenPrivacy
 UIImageView* cover;
+BOOL screenPrivacyEnabled;
+
 - (void)pluginInitialize {
 
+    screenPrivacyEnabled = NO;
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(appDidBecomeActive)
                                                 name:UIApplicationDidBecomeActiveNotification
@@ -32,13 +35,18 @@ UIImageView* cover;
                                                object:nil];
 }
 
-- (void)unblock:(CDVInvokedUrlCommand *)command
+- (void)block:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult* pluginResult = nil;
+    screenPrivacyEnabled = YES;
 }
 
 - (void)listen:(CDVInvokedUrlCommand*)command {
     _eventCommand = command;
+}
+
+- (void)unblock:(CDVInvokedUrlCommand *)command
+{
+    screenPrivacyEnabled = NO;
 }
 
 -(void) goingBackground {
@@ -69,7 +77,20 @@ UIImageView* cover;
 
 - (void)appDidBecomeActive {
     [ScreenRecordingDetector triggerDetectorTimer];
+    // if(cover!=nil) {
+    //     [cover removeFromSuperview];
+    //     cover = nil;
+    // }
     if(cover!=nil) {
+        UIView *blurEffectView = [cover viewWithTag:1234];
+
+        // fade away colour view from main view
+        [UIView animateWithDuration:0.5 animations:^{
+            blurEffectView.alpha = 0;
+        } completion:^(BOOL finished) {
+            // remove when finished fading
+            [blurEffectView removeFromSuperview];
+        }];
         [cover removeFromSuperview];
         cover = nil;
     }
@@ -79,7 +100,21 @@ UIImageView* cover;
     [ScreenRecordingDetector stopDetectorTimer];
     if(cover == nil) {
         cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
-        cover.backgroundColor = [UIColor blackColor];
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        blurEffectView.frame = cover.bounds;
+        blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+        blurEffectView.tag = 1234;
+        blurEffectView.alpha = 0;
+        cover.backgroundColor = [UIColor clearColor];
+        [cover addSubview:blurEffectView];
+        [cover bringSubviewToFront:blurEffectView];
+
+        [UIView animateWithDuration:0.5 animations:^{
+            blurEffectView.alpha = 1;
+        }];
         [self.webView addSubview:cover];
     }
 }
