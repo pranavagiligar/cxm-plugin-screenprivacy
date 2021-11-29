@@ -7,10 +7,15 @@
 @implementation ScreenPrivacy
 UIImageView* cover;
 BOOL screenPrivacyEnabled;
+BOOL shouldBlock;
 
 - (void)pluginInitialize {
-
     screenPrivacyEnabled = NO;
+    shouldBlock = YES;
+}
+
+- (void)initiate:(CDVInvokedUrlCommand *)command
+{
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(appDidBecomeActive)
                                                 name:UIApplicationDidBecomeActiveNotification
@@ -37,7 +42,7 @@ BOOL screenPrivacyEnabled;
 
 - (void)block:(CDVInvokedUrlCommand *)command
 {
-    screenPrivacyEnabled = YES;
+    shouldBlock = YES;
 }
 
 - (void)listen:(CDVInvokedUrlCommand*)command {
@@ -46,7 +51,7 @@ BOOL screenPrivacyEnabled;
 
 - (void)unblock:(CDVInvokedUrlCommand *)command
 {
-    screenPrivacyEnabled = NO;
+    shouldBlock = NO;
 }
 
 -(void) goingBackground {
@@ -76,46 +81,52 @@ BOOL screenPrivacyEnabled;
 }
 
 - (void)appDidBecomeActive {
-    [ScreenRecordingDetector triggerDetectorTimer];
-    // if(cover!=nil) {
-    //     [cover removeFromSuperview];
-    //     cover = nil;
-    // }
-    if(cover!=nil) {
-        UIView *blurEffectView = [cover viewWithTag:1234];
+    if (screenPrivacyEnabled) {
+        [ScreenRecordingDetector triggerDetectorTimer];
+        // if(cover!=nil) {
+        //     [cover removeFromSuperview];
+        //     cover = nil;
+        // }
+        if(cover!=nil) {
+            UIView *blurEffectView = [cover viewWithTag:1234];
 
-        // fade away colour view from main view
-        [UIView animateWithDuration:0.5 animations:^{
-            blurEffectView.alpha = 0;
-        } completion:^(BOOL finished) {
-            // remove when finished fading
-            [blurEffectView removeFromSuperview];
-        }];
-        [cover removeFromSuperview];
-        cover = nil;
+            // fade away colour view from main view
+            [UIView animateWithDuration:0.5 animations:^{
+                blurEffectView.alpha = 0;
+            } completion:^(BOOL finished) {
+                // remove when finished fading
+                [blurEffectView removeFromSuperview];
+            }];
+            [cover removeFromSuperview];
+            cover = nil;
+        }
+        screenPrivacyEnabled = NO;
     }
 }
 
 - (void)applicationWillResignActive {
-    [ScreenRecordingDetector stopDetectorTimer];
-    if(cover == nil) {
-        cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
-        
-        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
-        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        blurEffectView.frame = cover.bounds;
-        blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (shouldBlock) {
+        [ScreenRecordingDetector stopDetectorTimer];
+        if(cover == nil) {
+            cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
+            
+            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            blurEffectView.frame = cover.bounds;
+            blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-        blurEffectView.tag = 1234;
-        blurEffectView.alpha = 0;
-        cover.backgroundColor = [UIColor clearColor];
-        [cover addSubview:blurEffectView];
-        [cover bringSubviewToFront:blurEffectView];
+            blurEffectView.tag = 1234;
+            blurEffectView.alpha = 0;
+            cover.backgroundColor = [UIColor clearColor];
+            [cover addSubview:blurEffectView];
+            [cover bringSubviewToFront:blurEffectView];
 
-        [UIView animateWithDuration:0.5 animations:^{
-            blurEffectView.alpha = 1;
-        }];
-        [self.webView addSubview:cover];
+            [UIView animateWithDuration:0.5 animations:^{
+                blurEffectView.alpha = 1;
+            }];
+            [self.webView addSubview:cover];
+        }
+        screenPrivacyEnabled = YES;
     }
 }
 
