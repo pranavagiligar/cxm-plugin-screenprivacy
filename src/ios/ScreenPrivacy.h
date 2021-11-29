@@ -3,9 +3,11 @@
 
 @interface ScreenPrivacy : CDVPlugin
 
-- (void)initiate:(CDVInvokedUrlCommand*)command;
 - (void)unblock:(CDVInvokedUrlCommand*)command;
 - (void)block:(CDVInvokedUrlCommand *)command;
-- (void)listen:(CDVInvokedUrlCommand*)command;
+- (void)unblock_app_switcher:(CDVInvokedUrlCommand*)command;
+- (void)block_app_switcher:(CDVInvokedUrlCommand*)command;
+- (void)initIosSnapShotListeners:(CDVInvokedUrlCommand*)command;
+- (void)initIosScreenRecordListener:(CDVInvokedUrlCommand*)command;
 
 @end

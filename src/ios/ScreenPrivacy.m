@@ -1,4 +1,6 @@
 #import "ScreenPrivacy.h"
+// #define MY_ALERT(str) [[[UIAlertView alloc] initWithTitle:@"System Alert" message:str delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show]
+
 @interface ScreenPrivacy() {
     CDVInvokedUrlCommand * _eventCommand;
 }
@@ -6,15 +8,18 @@
 
 @implementation ScreenPrivacy
 UIImageView* cover;
-BOOL screenPrivacyEnabled;
-BOOL shouldBlockScreen;
+BOOL screenPrivacyEnabled = NO;
+BOOL shouldBlockSnapshot = NO;
+BOOL shouldBlockRecording = NO;
+
+BOOL isSnapshotRegistered = NO;
+BOOL isRecordingRegistered = NO;
 
 - (void)pluginInitialize {
-    screenPrivacyEnabled = NO;
-    shouldBlockScreen = YES;
+    
 }
 
-- (void)initiate:(CDVInvokedUrlCommand *)command
+- (void)initIosSnapShotListeners:(CDVInvokedUrlCommand *)command
 {
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(appDidBecomeActive)
@@ -24,50 +29,47 @@ BOOL shouldBlockScreen;
                                             selector:@selector(applicationWillResignActive)
                                                 name:UIApplicationWillResignActiveNotification
                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(tookScreenshot)
-                                                 name:UIApplicationUserDidTakeScreenshotNotification
-                                               object:nil];
-
-    [[NSNotificationCenter defaultCenter]addObserver:self
-                                            selector:@selector(goingBackground)
-                                                name:UIApplicationWillResignActiveNotification
-                                              object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(screenCaptureStatusChanged)
-                                                 name:kScreenRecordingDetectorRecordingStatusChangedNotification
-                                               object:nil];
+    isSnapshotRegistered = YES;
 }
 
+- (void)initIosScreenRecordListener:(CDVInvokedUrlCommand *)command
+{
+    [[NSNotificationCenter defaultCenter]addObserver:self
+                                            selector:@selector(screenCaptureStatusChanged)
+                                                name:kScreenRecordingDetectorRecordingStatusChangedNotification
+                                              object:nil];
+    isRecordingRegistered = YES;                           
+}
+
+// block screen recording
 - (void)block:(CDVInvokedUrlCommand *)command
 {
-    shouldBlockScreen = YES;
-}
-
-- (void)listen:(CDVInvokedUrlCommand*)command {
-    _eventCommand = command;
+    shouldBlockRecording = YES;
+    if (!isSnapshotRegistered) {
+        [self initIosSnapShotListeners:command];
+    }
+    if (!isRecordingRegistered) {
+        [self initIosScreenRecordListener:command];
+    }
 }
 
 - (void)unblock:(CDVInvokedUrlCommand *)command
 {
-    shouldBlockScreen = NO;
+    shouldBlockRecording = NO;
+    [ScreenRecordingDetector triggerDetectorTimer];
 }
 
--(void) goingBackground {
-    if(_eventCommand!=nil) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"background"];
-        [pluginResult setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:_eventCommand.callbackId];
+- (void)block_app_switcher:(CDVInvokedUrlCommand *)command
+{
+    shouldBlockSnapshot = YES;
+    if (!isSnapshotRegistered) {
+        [self initIosSnapShotListeners:command];
     }
 }
 
-- (void)tookScreenshot {
-    if(_eventCommand!=nil) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"tookScreenshot"];
-        [pluginResult setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:_eventCommand.callbackId];
-    }
+- (void)unblock_app_switcher:(CDVInvokedUrlCommand *)command
+{
+    shouldBlockSnapshot = NO;
 }
 
 - (void)setupView {
@@ -81,12 +83,12 @@ BOOL shouldBlockScreen;
 }
 
 - (void)appDidBecomeActive {
-    if (screenPrivacyEnabled) {
+    NSLog(@"SP:Active");
+    // if (shouldBlockRecording) {
         [ScreenRecordingDetector triggerDetectorTimer];
-        // if(cover!=nil) {
-        //     [cover removeFromSuperview];
-        //     cover = nil;
-        // }
+    // }
+    
+    if (screenPrivacyEnabled) {
         if(cover!=nil) {
             UIView *blurEffectView = [cover viewWithTag:1234];
 
@@ -105,8 +107,12 @@ BOOL shouldBlockScreen;
 }
 
 - (void)applicationWillResignActive {
-    if (shouldBlockScreen) {
+    NSLog(@"SP:ResignActive");
+    // if (shouldBlockRecording) {
         [ScreenRecordingDetector stopDetectorTimer];
+    // }
+
+    if (shouldBlockSnapshot) {
         if(cover == nil) {
             cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
             
@@ -131,7 +137,9 @@ BOOL shouldBlockScreen;
 }
 
 - (void)screenCaptureStatusChanged {
-    [self setupView];
+    if (shouldBlockRecording) {
+        [self setupView];
+    }
 }
 
 @end
