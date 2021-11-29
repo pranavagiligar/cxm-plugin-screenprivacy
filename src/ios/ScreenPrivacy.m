@@ -7,11 +7,11 @@
 @implementation ScreenPrivacy
 UIImageView* cover;
 BOOL screenPrivacyEnabled;
-BOOL shouldBlock;
+BOOL shouldBlockScreen;
 
 - (void)pluginInitialize {
     screenPrivacyEnabled = NO;
-    shouldBlock = YES;
+    shouldBlockScreen = YES;
 }
 
 - (void)initiate:(CDVInvokedUrlCommand *)command
@@ -42,7 +42,7 @@ BOOL shouldBlock;
 
 - (void)block:(CDVInvokedUrlCommand *)command
 {
-    shouldBlock = YES;
+    shouldBlockScreen = YES;
 }
 
 - (void)listen:(CDVInvokedUrlCommand*)command {
@@ -51,7 +51,7 @@ BOOL shouldBlock;
 
 - (void)unblock:(CDVInvokedUrlCommand *)command
 {
-    shouldBlock = NO;
+    shouldBlockScreen = NO;
 }
 
 -(void) goingBackground {
@@ -105,7 +105,7 @@ BOOL shouldBlock;
 }
 
 - (void)applicationWillResignActive {
-    if (shouldBlock) {
+    if (shouldBlockScreen) {
         [ScreenRecordingDetector stopDetectorTimer];
         if(cover == nil) {
             cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
