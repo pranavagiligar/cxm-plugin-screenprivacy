@@ -67,10 +67,10 @@ public class ScreenPrivacy extends CordovaPlugin {
             blockScreenshot(callbackContext);
             return true;
         } else if (action.equals(ACTION_BLOCK_APP_SWITCHER)) {
-            unblockAppSwitcher(callbackContext);
+            blockAppSwitcher(callbackContext);
             return true;
         } else if (action.equals(ACTION_UNBLOCK_APP_SWITCHER)) {
-            blockAppSwitcher(callbackContext);
+            unblockAppSwitcher(callbackContext);
             return true;
         } else return false;
     }

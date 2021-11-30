@@ -1,28 +1,16 @@
 # cordova-plugin-screenprivacy-cxm
-Plugin can stop screenshot, screen capture and preview from app switcher
+Plugin can stop screenshot, screen capture and preview from app switcher on iOS and Android
 
-## Note: ios plugin not has block/unblock screenshot support   
+## Installation [Stable]
+`cordova plugin add cordova-plugin-screenprivacy-cxm@2.0.0`
 
-## Installation
-`cordova plugin add cordova-plugin-screenprivacy-cxm`
-
-#### For local setup
+#### For local setup / plugin development and enhancement
   1. clone the repository to cordova directory 
   2. cordova plugin add ./cordova-plugin-screenprivacy-cxm
 
 ## Usage
 
 ```js
-document.addEventListener("deviceready", onDeviceReady, false);
-// To enable screenshot
-function onDeviceReady() {
-  window.plugins.screenprivacy.unblock(successCallback, errorCallback);
-}
-// To block screenshot
-function onDeviceReady() {
-  window.plugins.screenprivacy.block(successCallback, errorCallback);
-}
-
 // {"message": "success or failure", "reason": "reason in case of error"}
 function successCallback(result) {
   console.log(result);
@@ -33,11 +21,15 @@ function errorCallback(error) {
   console.log(error);
 }
 
-// Available events from the plugin
-document.addEventListener("onTookScreenshot",function(){
-    console.log('user took a screenshot');
-});
-document.addEventListener("onGoingBackground",function(){
-    console.log('app went to background');
-});
+// To block screen recording and screenshots in android and screen recording in ios
+// Alternative: unblockAppScreen()
+window.plugins.screenprivacy.blockAppScreen(
+  successCallback, errorCallback
+);
+
+// Alternative: unblockAppSwitcher()
+// To block only screens in app switcher on android and ios
+window.plugins.screenprivacy.blockAppSwitcher({}, {});
 ```
+
+Can activate both feature at the same time to enable full screen privacy that possibly provided by the playform

@@ -1,10 +1,10 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-screenprivacy-cxm"
-        version="1.0.12">
+        version="2.0.0">
 
     <name>cordova-plugin-screenprivacy-cxm</name>
-    <description>Cordova plugin to handle screenshot</description>
+    <description>Cordova plugin to handle privacy of screenshot, app switcher and screen recording</description>
     <license>MIT</license>
     <keywords>cordova</keywords>
     <repo>https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm</repo>
