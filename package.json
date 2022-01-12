@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-screenprivacy-cxm",
-  "version": "2.0.0",
+  "name": "cxm-plugin-screenprivacy",
+  "version": "1.0.0",
   "description": "Cordova plugin to handle screenshot",
   "cordova": {
-    "id": "cordova-plugin-screenprivacy-cxm",
+    "id": "cxm-plugin-screenprivacy",
     "platforms": [
       "ios",
       "android"
@@ -11,18 +11,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm.git"
+    "url": "git+https://github.com/pranavagiligar/cxm-plugin-screenprivacy.git"
   },
   "author": "grpranava",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm/issues"
+    "url": "https://github.com/pranavagiligar/cxm-plugin-screenprivacy/issues"
   },
   "scripts": {
     "version": "replace -s 'version=\"(.+)(?=\">)' 'version=\"'$npm_package_version plugin.xml && git add plugin.xml",
     "postversion": "git push && git push --tags"
   },
-  "homepage": "https://github.com/pranavagiligar/cordova-plugin-screenprivacy-cxm#readme",
+  "homepage": "https://github.com/pranavagiligar/cxm-plugin-screenprivacy#readme",
   "keywords": [
     "cordova",
     "screenshot",
