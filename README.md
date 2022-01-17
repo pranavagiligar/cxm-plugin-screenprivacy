@@ -2,7 +2,7 @@
 Plugin can stop screenshot, screen capture and preview from app switcher on iOS and Android
 
 ## Installation [Stable]
-`cordova plugin add cxm-plugin-screenprivacy@1.0.0`
+`cordova plugin add cxm-plugin-screenprivacy@1.1.0`
 
 #### For local setup / plugin development and enhancement
   1. clone the repository to cordova directory 

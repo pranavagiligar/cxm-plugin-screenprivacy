@@ -1,6 +1,6 @@
 {
   "name": "cxm-plugin-screenprivacy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Cordova plugin to handle screenshot",
   "cordova": {
     "id": "cxm-plugin-screenprivacy",
