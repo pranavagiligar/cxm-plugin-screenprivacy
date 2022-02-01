@@ -8,6 +8,7 @@
 
 @implementation ScreenPrivacy
 UIImageView* cover;
+UILabel* msgCover;
 BOOL screenPrivacyEnabled = NO;
 BOOL shouldBlockSnapshot = NO;
 BOOL shouldBlockRecording = NO;
@@ -76,9 +77,22 @@ BOOL isRecordingRegistered = NO;
     BOOL isCaptured = [[UIScreen mainScreen] isCaptured];
 
     if ([[ScreenRecordingDetector sharedInstance] isRecording]) {
-        [self webView].alpha = 0.f;
+        if(msgCover == nil) {
+            UILabel *msgCover = [[UILabel alloc] init];
+            msgCover.textColor = [UIColor whiteColor];
+            // [msgCover setFrame:position];
+            [msgCover sizeToFit];
+            msgCover.backgroundColor=[UIColor clearColor];
+            msgCover.textColor=[UIColor blackColor];
+            msgCover.userInteractionEnabled=NO;
+            msgCover.text= @"Screen recording prohibited";
+            [self.webView addSubview:msgCover];
+        }
+        // [self webView].alpha = 0.f;
     } else {
-        [self webView].alpha = 1.f;
+        [msgCover removeFromSuperview];
+        msgCover = nil;
+        // [self webView].alpha = 1.f;
     }
 }
 
