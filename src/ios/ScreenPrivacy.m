@@ -15,8 +15,14 @@ BOOL shouldBlockRecording = NO;
 BOOL isSnapshotRegistered = NO;
 BOOL isRecordingRegistered = NO;
 
+BOOL isSetupViewCalled = NO;
+
 - (void)pluginInitialize {
-    
+    // UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT" 
+    //                                                 message:@"Plugin loaded" 
+    //                                                 delegate:self 
+    //                                                 cancelButtonTitle:@"OK" 
+    //                                                 otherButtonTitles:nil];
 }
 
 - (void)initIosSnapShotListeners:(CDVInvokedUrlCommand *)command
@@ -50,6 +56,7 @@ BOOL isRecordingRegistered = NO;
     }
     if (!isRecordingRegistered) {
         [self initIosScreenRecordListener:command];
+        [self screenCaptureStatusChanged];
     }
 }
 
@@ -73,11 +80,33 @@ BOOL isRecordingRegistered = NO;
 }
 
 - (void)setupView {
+    if (isSetupViewCalled) return; 
+    isSetupViewCalled = YES;
     BOOL isCaptured = [[UIScreen mainScreen] isCaptured];
 
     if ([[ScreenRecordingDetector sharedInstance] isRecording]) {
         [self webView].alpha = 0.f;
+        //  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT" 
+        //                                             message:@"Recording started" 
+        //                                             delegate:self 
+        //                                             cancelButtonTitle:@"OK" 
+        //                                             otherButtonTitles:nil];
+        // [alert show];
+    } else if ([[ScreenRecordingDetector sharedInstance] isRecording] == true) {
+        [self webView].alpha = 0.f;
+        //  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT" 
+        //                                             message:@"Recording already in place" 
+        //                                             delegate:self 
+        //                                             cancelButtonTitle:@"OK" 
+        //                                             otherButtonTitles:nil];
+        // [alert show];
     } else {
+        //  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT" 
+        //                                             message:@"Recording not started." 
+        //                                             delegate:self 
+        //                                             cancelButtonTitle:@"OK" 
+        //                                             otherButtonTitles:nil];
+        // [alert show];
         [self webView].alpha = 1.f;
     }
 }
