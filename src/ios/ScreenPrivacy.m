@@ -10,10 +10,7 @@
 UIImageView* cover;
 BOOL screenPrivacyEnabled = NO;
 BOOL shouldBlockSnapshot = NO;
-BOOL shouldBlockRecording = NO;
-
 BOOL isSnapshotRegistered = NO;
-BOOL isRecordingRegistered = NO;
 
 - (void)pluginInitialize {
     
@@ -32,33 +29,6 @@ BOOL isRecordingRegistered = NO;
     isSnapshotRegistered = YES;
 }
 
-- (void)initIosScreenRecordListener:(CDVInvokedUrlCommand *)command
-{
-    [[NSNotificationCenter defaultCenter]addObserver:self
-                                            selector:@selector(screenCaptureStatusChanged)
-                                                name:kScreenRecordingDetectorRecordingStatusChangedNotification
-                                              object:nil];
-    isRecordingRegistered = YES;                           
-}
-
-// block screen recording
-- (void)block:(CDVInvokedUrlCommand *)command
-{
-    shouldBlockRecording = YES;
-    if (!isSnapshotRegistered) {
-        [self initIosSnapShotListeners:command];
-    }
-    if (!isRecordingRegistered) {
-        [self initIosScreenRecordListener:command];
-    }
-}
-
-- (void)unblock:(CDVInvokedUrlCommand *)command
-{
-    shouldBlockRecording = NO;
-    [ScreenRecordingDetector triggerDetectorTimer];
-}
-
 - (void)block_app_switcher:(CDVInvokedUrlCommand *)command
 {
     shouldBlockSnapshot = YES;
@@ -72,22 +42,8 @@ BOOL isRecordingRegistered = NO;
     shouldBlockSnapshot = NO;
 }
 
-- (void)setupView {
-    BOOL isCaptured = [[UIScreen mainScreen] isCaptured];
-
-    if ([[ScreenRecordingDetector sharedInstance] isRecording]) {
-        [self webView].alpha = 0.f;
-    } else {
-        [self webView].alpha = 1.f;
-    }
-}
-
 - (void)appDidBecomeActive {
-    NSLog(@"SP:Active");
-    // if (shouldBlockRecording) {
-        [ScreenRecordingDetector triggerDetectorTimer];
-    // }
-    
+    NSLog(@"SP:Active");  
     if (screenPrivacyEnabled) {
         if(cover!=nil) {
             UIView *blurEffectView = [cover viewWithTag:1234];
@@ -108,10 +64,6 @@ BOOL isRecordingRegistered = NO;
 
 - (void)applicationWillResignActive {
     NSLog(@"SP:ResignActive");
-    // if (shouldBlockRecording) {
-        [ScreenRecordingDetector stopDetectorTimer];
-    // }
-
     if (shouldBlockSnapshot) {
         if(cover == nil) {
             cover = [[UIImageView alloc] initWithFrame:[self.webView frame]];
@@ -133,12 +85,6 @@ BOOL isRecordingRegistered = NO;
             [self.webView addSubview:cover];
         }
         screenPrivacyEnabled = YES;
-    }
-}
-
-- (void)screenCaptureStatusChanged {
-    if (shouldBlockRecording) {
-        [self setupView];
     }
 }
 
