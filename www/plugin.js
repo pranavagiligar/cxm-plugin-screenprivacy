@@ -13,6 +13,3 @@ exports.unblockAppSwitcher = function (successCallback, errorCallback) {
 exports.initIosSnapShotListeners = function (successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, 'screenprivacy', 'initIosSnapShotListeners', []);
 };
-exports.initIosScreenRecordListener = function (successCallback, errorCallback) {
-  cordova.exec(successCallback, errorCallback, 'screenprivacy', 'initIosScreenRecordListener', []);
-};
